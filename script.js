@@ -608,18 +608,44 @@
     }
   }
 
+  async function fetchHead(url, timeoutMs) {
+    const fullUrl = assetUrl(url);
+    console.info(LOG, "HEAD", fullUrl);
+    const controller = new AbortController();
+    const timer = setTimeout(function () { controller.abort(); }, timeoutMs || 10000);
+    try {
+      const res = await fetch(fullUrl, { method: "HEAD", cache: "no-store", signal: controller.signal });
+      clearTimeout(timer);
+      if (!res.ok) throw new Error("HTTP " + res.status + " — " + url);
+      return res;
+    } catch (err) {
+      clearTimeout(timer);
+      throw normalizeFetchError(url, err);
+    }
+  }
+
   async function verifyServerReady() {
-    const checks = ["data/estado.qmd", "data/estado.geojson", "data/CAR.geojson"];
+    const checks = [
+      { path: "data/estado.qmd", head: false },
+      { path: "data/CAR.qmd", head: false },
+      { path: "data/estado.geojson", head: true },
+      { path: "data/CAR.geojson", head: true },
+    ];
+
     for (let i = 0; i < checks.length; i++) {
-      const path = checks[i];
+      const item = checks[i];
       try {
-        const res = await fetchWithTimeout(path, 15000);
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        console.info(LOG, "OK:", path);
+        if (item.head) {
+          await fetchHead(item.path, 10000);
+        } else {
+          const res = await fetchWithTimeout(item.path, 10000);
+          await res.text();
+        }
+        console.info(LOG, "OK:", item.path);
       } catch (err) {
-        console.warn(LOG, "Verificação falhou:", path, err.message);
+        console.warn(LOG, "Verificação falhou:", item.path, err.message);
         throw new Error(
-          "Arquivo ausente ou inacessível: " + path +
+          "Arquivo ausente ou inacessível: " + item.path +
           ". Execute start_server.bat na pasta do projeto e confira data/."
         );
       }

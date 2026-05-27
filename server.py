@@ -4,11 +4,13 @@
 import http.server
 import os
 import socketserver
+import sys
 import webbrowser
 from pathlib import Path
 
 PORT = int(os.environ.get("PORT", "3000"))
 ROOT = Path(__file__).resolve().parent
+HOST = os.environ.get("HOST", "0.0.0.0")
 
 
 class WebGISHandler(http.server.SimpleHTTPRequestHandler):
@@ -58,22 +60,29 @@ def check_data_files():
 
 def main():
     url = f"http://localhost:{PORT}"
-    print("========================================")
-    print(" WebGIS Viewer ativo")
-    print(f" URL: {url}")
-    print(f" Pasta: {ROOT}")
+    print("========================================", flush=True)
+    print(" WebGIS Viewer ativo", flush=True)
+    print(f" URL: {url}", flush=True)
+    print(f" Pasta: {ROOT}", flush=True)
     check_data_files()
-    print(" Pressione Ctrl+C para encerrar")
-    print("========================================")
+    print(" Pressione Ctrl+C para encerrar", flush=True)
+    print("========================================", flush=True)
 
     if os.environ.get("NO_OPEN") != "1":
         webbrowser.open(url)
 
-    with ThreadingHTTPServer(("", PORT), WebGISHandler) as httpd:
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\nServidor encerrado.")
+    try:
+        with ThreadingHTTPServer((HOST, PORT), WebGISHandler) as httpd:
+            try:
+                httpd.serve_forever()
+            except KeyboardInterrupt:
+                print("\nServidor encerrado.", flush=True)
+    except OSError as err:
+        if err.errno in (10048, 98) or "in use" in str(err).lower():
+            print(f"\n ERRO: porta {PORT} já está em uso.", flush=True)
+            print(" Feche o terminal anterior ou use: set PORT=3001", flush=True)
+            sys.exit(1)
+        raise
 
 
 if __name__ == "__main__":
