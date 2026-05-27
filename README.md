@@ -4,6 +4,8 @@ Visualizador geográfico interativo desenvolvido com **HTML, CSS, JavaScript** e
 
 **Demo online:** [https://pedronetoeng10.github.io/f2wPgm/](https://pedronetoeng10.github.io/f2wPgm/)
 
+> Após o primeiro push, ative em **Settings → Pages → Source: GitHub Actions** (ou branch `main` / root).
+
 ---
 
 ## Funcionalidades
