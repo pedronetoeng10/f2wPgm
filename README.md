@@ -4,7 +4,26 @@ Visualizador geográfico interativo desenvolvido com **HTML, CSS, JavaScript** e
 
 **Demo online:** [https://pedronetoeng10.github.io/f2wPgm/](https://pedronetoeng10.github.io/f2wPgm/)
 
-> Após o primeiro push, ative em **Settings → Pages → Source: GitHub Actions** (ou branch `main` / root).
+---
+
+## Aba Projetos no GitHub
+
+A aba **Projetos** é um quadro de tarefas (Kanban), separada do código. Para adicionar este WebGIS:
+
+### Opção rápida (3 cliques)
+
+1. Abra [github.com/pedronetoeng10/f2wPgm](https://github.com/pedronetoeng10/f2wPgm) → aba **Projetos**
+2. Clique em **+ Novo projeto**
+3. Nome: `WebGIS Viewer` → crie o quadro
+
+### Opção automática (script)
+
+```powershell
+gh auth login
+powershell -ExecutionPolicy Bypass -File scripts\criar-projeto-github.ps1
+```
+
+Ou dê duplo clique em `abrir-projeto-github.bat`.
 
 ---
 
