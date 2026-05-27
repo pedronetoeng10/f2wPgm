@@ -1,0 +1,15 @@
+{
+  "name": "webgis-viewer",
+  "version": "1.0.0",
+  "description": "WebGIS Viewer com Leaflet.js e camadas GeoJSON",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["webgis", "leaflet", "geojson"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

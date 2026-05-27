@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WebGIS Viewer — visualização de camadas CAR e Estado no Brasil">
+  <script>
+    (function () {
+      var path = window.location.pathname;
+      if (path.endsWith("/index.html")) path = path.slice(0, -"/index.html".length);
+      else if (!path.endsWith("/")) path += "/";
+      var base = document.createElement("base");
+      base.href = path;
+      document.head.appendChild(base);
+    })();
+  </script>
+  <title>WebGIS Viewer</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  >
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header" aria-label="Cabeçalho do sistema">
+    <div class="app-header__brand">
+      <span class="app-header__icon" aria-hidden="true">&#9670;</span>
+      <h1>WebGIS Viewer</h1>
+    </div>
+  </header>
+
+  <main class="map-shell">
+    <div id="map"></div>
+
+    <div class="loader" id="loader" aria-live="polite">
+      <div class="loader__spinner" id="loader-spinner"></div>
+      <p class="loader__text" id="loader-text">Inicializando mapa...</p>
+      <p class="loader__hint hidden" id="loader-hint"></p>
+      <button type="button" class="loader__btn hidden" id="loader-retry">Tentar novamente</button>
+    </div>
+
+    <div class="coords-bar" id="coords-bar" aria-live="polite">
+      Lat: -- &nbsp;|&nbsp; Lng: --
+    </div>
+
+    <aside class="toolbar" aria-label="Ferramentas do mapa">
+      <button type="button" id="btn-locate" title="Minha localização" aria-label="Minha localização">
+        &#8982;
+      </button>
+      <button type="button" id="btn-measure" title="Medir distância" aria-label="Medir distância">
+        &#8644;
+      </button>
+      <button type="button" id="btn-fullscreen" title="Tela cheia" aria-label="Tela cheia">
+        &#9974;
+      </button>
+    </aside>
+
+    <div class="measure-info hidden" id="measure-info">
+      Distância: <span id="measure-distance">0 m</span>
+      <button type="button" id="btn-measure-clear">Limpar</button>
+    </div>
+
+    <div id="minimap" class="minimap" aria-label="Minimapa"></div>
+    <div id="legend-panel" class="legend-panel" aria-label="Legenda das camadas"></div>
+
+    <aside
+      id="server-guide"
+      class="server-guide hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="server-guide-title"
+    >
+      <div class="server-guide__card">
+        <div class="server-guide__icon" aria-hidden="true">&#9888;</div>
+        <h2 id="server-guide-title">Servidor local necessário</h2>
+        <p class="server-guide__lead">
+          Este WebGIS precisa ser executado em um servidor local para carregar arquivos GeoJSON.
+        </p>
+        <p class="server-guide__sub">
+          Navegadores bloqueiam o carregamento de arquivos locais por segurança quando o projeto é aberto diretamente pelo explorador de arquivos.
+        </p>
+
+        <div class="server-guide__detected hidden" id="server-detected">
+          <p class="server-guide__detected-label">Servidor detectado na sua máquina</p>
+          <a class="server-guide__cta" id="server-detected-link" href="http://localhost:3000">
+            Abrir http://localhost:3000
+          </a>
+        </div>
+
+        <div class="server-guide__options">
+          <h3>Como iniciar o WebGIS</h3>
+
+          <div class="server-guide__option">
+            <span class="server-guide__badge">1</span>
+            <div class="server-guide__option-body">
+              <strong>Executar start_server.bat</strong>
+              <p>Duplo clique no arquivo na pasta do projeto (Windows).</p>
+              <button type="button" class="server-guide__copy" data-copy="start_server.bat">
+                Copiar nome do arquivo
+              </button>
+            </div>
+          </div>
+
+          <div class="server-guide__option">
+            <span class="server-guide__badge">2</span>
+            <div class="server-guide__option-body">
+              <strong>Node.js</strong>
+              <p>Na pasta do projeto, no terminal:</p>
+              <code class="server-guide__code">npm install && npm start</code>
+              <button type="button" class="server-guide__copy" data-copy="npm install && npm start">
+                Copiar comando
+              </button>
+            </div>
+          </div>
+
+          <div class="server-guide__option">
+            <span class="server-guide__badge">3</span>
+            <div class="server-guide__option-body">
+              <strong>Python</strong>
+              <p>Na pasta do projeto, no terminal:</p>
+              <code class="server-guide__code">python server.py</code>
+              <button type="button" class="server-guide__copy" data-copy="python server.py">
+                Copiar comando
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="server-guide__footer">
+          Depois acesse <strong>http://localhost:3000</strong> no navegador.
+        </p>
+      </div>
+    </aside>
+  </main>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="script.js"></script>
+</body>
+</html>
